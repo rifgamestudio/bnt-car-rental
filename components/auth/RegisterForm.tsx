@@ -1,46 +1,51 @@
+// components/auth/RegisterForm.tsx
 "use client";
 import { useState } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { supabase } from '@/lib/supabase';
 
 export default function RegisterForm() {
-  const { login } = useAuth();
-  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', password: '' });
+  const [msg, setMsg] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulación de llamada a Supabase Auth
-    const mockUser = { id: '123', name: 'Juan BNT', email: 'juan@bnt.com', status: 'registered' as const };
-    login(mockUser);
-    setStep(2);
+    // 1. Registro en Supabase Auth
+    const { data, error } = await supabase.auth.signUp({
+      email: formData.email,
+      password: formData.password,
+    });
+
+    if (error) return alert(error.message);
+
+    // 2. Crear perfil con estado 'registered'
+    await supabase.from('profiles').insert([
+      { 
+        id: data.user?.id, 
+        full_name: formData.name, 
+        phone: formData.phone, 
+        status: 'registered' 
+      }
+    ]);
+
+    setMsg("Registro exitoso. Ahora necesitamos verificar tu identidad para poder alquilar coches.");
   };
 
-  if (step === 2) {
-    return (
-      <div className="bg-blue-50 p-6 rounded-xl border border-blue-200 text-center">
-        <h3 className="text-xl font-bold text-blue-800">¡Registro exitoso! 🎉</h3>
-        <p className="text-blue-600 mt-2">
-          Para garantizar la seguridad, necesitamos verificar tu identidad antes de que puedas alquilar un coche.
-        </p>
-        <button 
-          onClick={() => window.location.href = '/verify'}
-          className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg font-bold"
-        >
-          Ir a verificar mi identidad
-        </button>
-      </div>
-    );
-  }
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto bg-white p-8 rounded-2xl shadow-lg text-black">
-      <h2 className="text-2xl font-black italic mb-6">ÚNETE A BNT</h2>
-      <input type="text" placeholder="Nombre completo" className="w-full p-3 border rounded-lg" required />
-      <input type="email" placeholder="Email" className="w-full p-3 border rounded-lg" required />
-      <input type="tel" placeholder="Teléfono (+34...)" className="w-full p-3 border rounded-lg" required />
-      <input type="password" placeholder="Contraseña" className="w-full p-3 border rounded-lg" required />
-      <button type="submit" className="w-full bg-black text-white py-3 rounded-lg font-bold hover:bg-gray-800 transition">
-        CREAR CUENTA
-      </button>
-    </form>
+    <div className="p-6 bg-white rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold mb-4">Crea tu cuenta</h2>
+      {msg ? (
+        <div className="bg-blue-100 p-4 rounded text-blue-700">{msg}</div>
+      ) : (
+        <form onSubmit={handleRegister} className="space-y-4">
+          <input className="w-full border p-2 rounded" placeholder="Nombre completo" onChange={e => setFormData({...formData, name: e.target.value})} />
+          <input className="w-full border p-2 rounded" placeholder="Email" type="email" onChange={e => setFormData({...formData, email: e.target.value})} />
+          <input className="w-full border p-2 rounded" placeholder="Teléfono" onChange={e => setFormData({...formData, phone: e.target.value})} />
+          <input className="w-full border p-2 rounded" placeholder="Contraseña" type="password" onChange={e => setFormData({...formData, password: e.target.value})} />
+          <button className="w-full bg-orange-500 text-white p-2 rounded font-bold hover:bg-orange-600">
+            Registrarse
+          </button>
+        </form>
+      )}
+    </div>
   );
 }

@@ -3,16 +3,24 @@
 import React from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link, usePathname, useRouter } from './../navigation'; 
-import { User, Car, Globe } from 'lucide-react';
+import { User, Car, Globe, LogOut } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext'; // Importamos el contexto
+import { supabase } from '@/lib/supabase';
 
 export default function Navbar() {
   const t = useTranslations('Navbar');
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
+  const { user, status } = useAuth(); // Obtenemos el usuario y su estado (verified, etc)
 
   const changeLanguage = (newLocale: string) => {
     router.replace(pathname, { locale: newLocale as any });
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/');
   };
 
   return (
@@ -27,18 +35,17 @@ export default function Navbar() {
       {/* Menú Derecha */}
       <div className="flex items-center gap-6 text-[11px] font-bold uppercase tracking-wider">
         
-        {/* 1. Gestionar las reservas */}
-        <div className="flex items-center gap-2 cursor-pointer hover:underline decoration-1 underline-offset-4">
+        {/* 1. Gestionar las reservas (Solo visible si está verificado) */}
+        <Link href="/bookings" className="flex items-center gap-2 cursor-pointer hover:underline decoration-1 underline-offset-4 text-white no-underline">
           <Car className="w-4 h-4" />
           <span>{t('manage')}</span>
-        </div>
+        </Link>
 
-        {/* 2. Idioma (Moneda eliminada) */}
+        {/* 2. Idioma */}
         <div className="group relative flex items-center gap-2 cursor-pointer py-4">
           <Globe className="w-4 h-4 text-gray-400" />
           <span className="uppercase">{locale}</span>
           
-          {/* Menú desplegable de idiomas */}
           <div className="absolute top-full right-0 bg-white text-black hidden group-hover:block shadow-2xl rounded-md overflow-hidden min-w-[100px] border border-gray-100">
             {['en', 'fr', 'nl'].map((lang) => (
               <div 
@@ -52,11 +59,36 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* 3. Iniciar sesión | Registrarse */}
-        <div className="flex items-center gap-2 cursor-pointer hover:underline decoration-1 underline-offset-4">
-          <User className="w-4 h-4" />
-          <span>{t('login')}</span>
-        </div>
+        {/* 3. Lógica Dinámica: PERFIL o LOGIN */}
+        {user ? (
+          // SI ESTÁ LOGUEADO: Muestra enlace al Perfil y Logout
+          <div className="flex items-center gap-5">
+            <Link 
+              href="/profile" 
+              className="flex items-center gap-2 cursor-pointer hover:underline decoration-1 underline-offset-4 text-white no-underline"
+            >
+              <div className={`w-2 h-2 rounded-full ${status === 'verified' ? 'bg-green-500' : 'bg-orange-500 animate-pulse'}`}></div>
+              <span>{user.name || 'MI PERFIL'}</span>
+            </Link>
+            
+            <button 
+              onClick={handleLogout}
+              className="text-gray-400 hover:text-white transition-colors"
+              title="Cerrar Sesión"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
+        ) : (
+          // SI NO ESTÁ LOGUEADO: Muestra Login original
+          <Link 
+            href="/auth/login" 
+            className="flex items-center gap-2 cursor-pointer hover:underline decoration-1 underline-offset-4 text-white no-underline"
+          >
+            <User className="w-4 h-4" />
+            <span>{t('login')}</span>
+          </Link>
+        )}
       </div>
     </nav>
   );

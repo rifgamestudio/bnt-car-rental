@@ -3,10 +3,25 @@
 import React from 'react';
 import { useTranslations } from 'next-intl';
 import { Car, Search, Calendar, Plus } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext'; // Importamos el estado del usuario
+import { useRouter } from 'next/navigation';
 
 export default function SearchWidget() {
-  // Corregido: antes decía t = t
   const t = useTranslations('Search');
+  const { status } = useAuth(); // Obtenemos el estado: 'guest', 'registered', 'pending', 'verified'
+  const router = useRouter();
+
+  const handleSearch = () => {
+    // Si el usuario no está verificado, le avisamos y lo mandamos al perfil
+    if (status !== 'verified') {
+      alert("Por seguridad, debes estar registrado y verificado para buscar y alquilar coches.");
+      router.push('/profile'); // O la ruta donde tengas tu formulario de verificación
+      return;
+    }
+
+    // Si está verificado, aquí iría tu lógica normal de búsqueda
+    console.log("Buscando coches...");
+  };
 
   return (
     <div className="w-full max-w-[1240px] bg-white rounded-2xl shadow-[0_15px_45px_rgba(0,0,0,0.1)] p-7 text-black">
@@ -17,7 +32,7 @@ export default function SearchWidget() {
         </div>
       </div>
 
-      {/* Cuerpo del Buscador - Alineación milimétrica con items-end */}
+      {/* Cuerpo del Buscador */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-3 items-end">
         
         {/* Bloque 1: Recogida y Devolución */}
@@ -64,10 +79,17 @@ export default function SearchWidget() {
           </div>
         </div>
 
-        {/* Bloque 4: Botón (Texto en una línea) */}
+        {/* Bloque 4: Botón (Actualizado con lógica de estado) */}
         <div className="xl:col-span-2">
-          <button className="w-full h-14 bg-[#ff5f00] hover:bg-[#e65600] text-white rounded-lg font-bold text-[14px] transition-all shadow-md active:scale-95 px-4 whitespace-nowrap flex items-center justify-center">
-            {t('btn_show')}
+          <button 
+            onClick={handleSearch}
+            className={`w-full h-14 text-white rounded-lg font-bold text-[14px] transition-all shadow-md active:scale-95 px-4 whitespace-nowrap flex items-center justify-center ${
+              status === 'verified' 
+              ? 'bg-[#ff5f00] hover:bg-[#e65600]' 
+              : 'bg-gray-400 cursor-pointer'
+            }`}
+          >
+            {status === 'verified' ? t('btn_show') : 'VERIFICAR CUENTA'}
           </button>
         </div>
       </div>

@@ -1,54 +1,86 @@
+// components/verify/IdentityScanner.tsx
 "use client";
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { supabase } from '@/lib/supabase'; // Asegúrate de que la ruta sea correcta
 import { useAuth } from '@/context/AuthContext';
-import DocumentScanner from '../DocumentScanner'; // El que hicimos antes
 
 export default function IdentityScanner() {
-  const { updateStatus } = useAuth();
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [errorCount, setErrorCount] = useState(0);
+  const { user, refreshStatus } = useAuth();
+  const [isUploading, setIsUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleOcrResult = async (data: any) => {
-    setIsProcessing(true);
-    updateStatus('pending');
+  const processOCR = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
 
-    // PLACEHOLDER: Aquí llamarías a tu API de Backend para validar el texto
-    // Simulación de proceso de 3 segundos
-    setTimeout(() => {
-      const isValid = Math.random() > 0.2; // 80% éxito simulación
+    setIsUploading(true);
+    setError(null);
 
-      if (isValid) {
-        updateStatus('verified');
-        alert("✅ Verificación aprobada. Ya puedes reservar.");
-      } else {
-        updateStatus('registered');
-        setErrorCount(prev => prev + 1);
-        alert("❌ Error de lectura. Asegúrate de que haya buena luz y el documento esté centrado.");
-      }
-      setIsProcessing(false);
-    }, 3000);
+    try {
+      // 1. SIMULACIÓN DE LLAMADA API OCR
+      // Aquí es donde harías: const res = await fetch('/api/ocr', { body: formData... })
+      console.log("Procesando archivo:", file.name);
+      
+      // Simulamos espera de 3 segundos del servidor OCR
+      await new Promise(resolve => setTimeout(resolve, 3000));
+
+      // 2. ACTUALIZACIÓN EN SUPABASE
+      // Actualizamos el estado del usuario a 'pending' (o 'verified' si el OCR es automático)
+      const { error: dbError } = await supabase
+        .from('profiles')
+        .update({ status: 'pending' }) // Lo ponemos en espera de revisión
+        .eq('id', user?.id);
+
+      if (dbError) throw dbError;
+
+      // 3. ACTUALIZAR ESTADO GLOBAL
+      if (refreshStatus) await refreshStatus();
+
+    } catch (err) {
+      setError("No pudimos procesar la imagen. Asegúrate de que sea clara y se vea todo el documento.");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-2xl shadow-xl text-black">
-      <h2 className="text-2xl font-bold mb-4">Verificación de Identidad</h2>
-      
-      {isProcessing ? (
-        <div className="text-center py-10">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
-          <p className="font-medium">Analizando documentos con IA...</p>
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 gap-4">
+        <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center hover:border-orange-300 transition-colors">
+          <p className="text-xs font-bold text-gray-400 mb-2 uppercase">Cara Frontal</p>
+          <div className="text-2xl mb-2">🪪</div>
+        </div>
+        <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center hover:border-orange-300 transition-colors">
+          <p className="text-xs font-bold text-gray-400 mb-2 uppercase">Cara Trasera</p>
+          <div className="text-2xl mb-2">💳</div>
+        </div>
+      </div>
+
+      {isUploading ? (
+        <div className="flex items-center justify-center p-6 bg-gray-50 rounded-lg">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mr-3"></div>
+          <p className="font-semibold text-orange-600">Analizando documentos con IA...</p>
         </div>
       ) : (
-        <>
-          <p className="text-gray-600 mb-6">Sube una foto clara de tu Pasaporte o Carnet de Conducir.</p>
-          <DocumentScanner label="Documento de Identidad" onScanComplete={handleOcrResult} />
-          
-          {errorCount > 0 && (
-            <p className="mt-4 text-red-500 text-sm font-bold">
-              Intento fallido #{errorCount}. Por favor, evita reflejos en el plástico del carnet.
-            </p>
-          )}
-        </>
+        <div className="space-y-4">
+          <label className="block w-full text-center bg-black text-white py-4 rounded-xl font-bold cursor-pointer hover:bg-zinc-800 transition-all">
+            SUBIR DOCUMENTOS O CAPTURAR
+            <input 
+              type="file" 
+              accept="image/*" 
+              capture="environment" 
+              className="hidden" 
+              onChange={processOCR}
+            />
+          </label>
+          <p className="text-[10px] text-gray-400 text-center uppercase tracking-widest">Aceptamos DNI, Pasaporte o Carnet de Conducir</p>
+        </div>
+      )}
+
+      {error && (
+        <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100">
+          ⚠️ {error}
+        </div>
       )}
     </div>
   );

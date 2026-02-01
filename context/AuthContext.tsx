@@ -1,8 +1,8 @@
+// context/AuthContext.tsx
 "use client";
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
 
-// Definimos los estados posibles del usuario en BNT
 export type UserStatus = 'guest' | 'registered' | 'pending' | 'verified';
 
 interface UserProfile {
@@ -10,16 +10,14 @@ interface UserProfile {
   name: string;
   email: string;
   status: UserStatus;
-  avatar?: string;
+  phone?: string;
 }
 
 interface AuthContextType {
   user: UserProfile | null;
   status: UserStatus;
-  login: (userData: UserProfile) => void;
-  logout: () => void;
-  updateStatus: (newStatus: UserStatus) => void;
   isLoading: boolean;
+  refreshStatus: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,45 +27,52 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [status, setStatus] = useState<UserStatus>('guest');
   const [isLoading, setIsLoading] = useState(true);
 
-  // Efecto inicial: Aquí es donde más adelante conectaremos con Supabase
+  const fetchProfile = async (sessionUser: any) => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', sessionUser.id)
+      .single();
+
+    if (data) {
+      setUser({
+        id: sessionUser.id,
+        name: data.full_name,
+        email: sessionUser.email,
+        status: data.status,
+        phone: data.phone
+      });
+      setStatus(data.status);
+    }
+    setIsLoading(false);
+  };
+
   useEffect(() => {
-    const checkUser = async () => {
-      // Simulación: Al cargar, verificamos si hay sesión
-      // Por ahora lo dejamos como guest
-      setIsLoading(false);
-    };
-    checkUser();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) fetchProfile(session.user);
+      else setIsLoading(false);
+    });
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) fetchProfile(session.user);
+      else {
+        setUser(null);
+        setStatus('guest');
+      }
+    });
+
+    return () => authListener.subscription.unsubscribe();
   }, []);
 
-  const login = (userData: UserProfile) => {
-    setUser(userData);
-    setStatus(userData.status);
-  };
-
-  const logout = () => {
-    setUser(null);
-    setStatus('guest');
-  };
-
-  const updateStatus = (newStatus: UserStatus) => {
-    setStatus(newStatus);
-    if (user) {
-      setUser({ ...user, status: newStatus });
-    }
-  };
-
   return (
-    <AuthContext.Provider value={{ user, status, login, logout, updateStatus, isLoading }}>
+    <AuthContext.Provider value={{ user, status, isLoading, refreshStatus: () => fetchProfile(user) }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
-// Hook personalizado para usar el contexto fácilmente
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth debe usarse dentro de un AuthProvider');
-  }
+  if (!context) throw new Error("useAuth debe usarse dentro de AuthProvider");
   return context;
 };
