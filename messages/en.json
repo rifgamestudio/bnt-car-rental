@@ -1,0 +1,22 @@
+{
+  "Navbar": {
+    "manage": "Manage bookings",
+    "language": "Language",
+    "login": "Login | Register"
+  },
+  "Search": {
+    "cars": "Cars",
+    "pickup_return": "Pickup & Return",
+    "placeholder": "Airport",
+    "date_pickup": "Pickup date",
+    "date_return": "Return date",
+    "btn_show": "Show cars",
+    "corporate": "Apply corporate rate"
+  },
+  "Promo": {
+    "discount": "UP TO 15% DISCOUNT",
+    "title": "CAR RENTAL FOR COMPANIES",
+    "body": "Benefit from advantages and special prices.",
+    "button": "Register now for free"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "Navbar": {
+    "manage": "Gérer les réservations",
+    "language": "Langue",
+    "login": "Connexion | S'inscrire"
+  },
+  "Search": {
+    "cars": "Voitures",
+    "pickup_return": "Prise en charge et retour",
+    "placeholder": "Aéroport",
+    "date_pickup": "Date de prise en charge",
+    "date_return": "Date de retour",
+    "btn_show": "Afficher les voitures",
+    "corporate": "Appliquer le tarif entreprise"
+  },
+  "Promo": {
+    "discount": "JUSQU'À 15% DE RÉDUCTION",
+    "title": "LOCATION DE VOITURES POUR ENTREPRISES",
+    "body": "Bénéficiez d'avantages et de tarifs spéciaux.",
+    "button": "Inscrivez-vous gratuitement"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "Navbar": {
+    "manage": "Boekingen beheren",
+    "language": "Taal",
+    "login": "Inloggen | Registreren"
+  },
+  "Search": {
+    "cars": "Auto's",
+    "pickup_return": "Ophalen en inleveren",
+    "placeholder": "Luchthaven",
+    "date_pickup": "Ophaaldatum",
+    "date_return": "Inleverdatum",
+    "btn_show": "Toon auto's",
+    "corporate": "Zakelijk tarief toepassen"
+  },
+  "Promo": {
+    "discount": "TOT 15% KORTING",
+    "title": "AUTOVERHUUR VOOR BEDRIJVEN",
+    "body": "Profiteer van voordelen en speciale prijzen.",
+    "button": "Nu gratis registreren"
+  }
+}
