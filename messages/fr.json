@@ -61,7 +61,7 @@
     "forgot_pass": "Mot de passe oublié ?",
     "btn_continue": "Continuer avec l’e-mail",
     "or_social": "ou connectez-vous avec",
-    "no_account": "Vous n’avez pas de compte ?",
+    "no_account": "Vous n’avez pas de cuenta ?",
     "create_account": "Créer un compte",
     "login": "CONNEXION",
     "already_account": "DÉJÀ UN COMPTE ?",
@@ -97,7 +97,7 @@
     "upload_btn": "TÉLÉCHARGER LES DOCUMENTS",
     "accepted_docs": "NOUS ACCEPTONS CNI, PASSEPORT OU PERMIS DE CONDUIRE",
     "processing": "ANALYSE DES DOCUMENTS...",
-    "wait": "Cela peut prendre quelques secondes",
+    "wait": "Cela puede prendre quelques secondes",
     "error": "Erreur lors du traitement de l’image. Veuillez réessayer."
   },
   "ForgotPass": {
@@ -140,7 +140,7 @@
     "btn_approve": "Approuver le client"
   },
   "Sidebar": {
-    "users": "Utilisateurs",
+    "users": "Utilisadores",
     "fleet": "Flotte Véhicules",
     "bookings": "Réservations",
     "logout": "Déconnexion"
@@ -240,5 +240,11 @@
     "btn_confirm": "CONFIRMER LA RÉSERVATION",
     "processing": "TRAITEMENT EN COURS...",
     "success_alert": "Réservation envoyée avec succès ! Vous allez être redirigé vers vos réservations."
+  },
+  "Home": {
+    "fleet_title": "Nos véhicules",
+    "fleet_subtitle": "Trouvez la voiture qui vous convient en consultant notre parc auto.",
+    "hero_title_1": "LE CONFORT PREMIUM",
+    "hero_title_2": "UN PRIX ACCESSIBLE"
   }
 }

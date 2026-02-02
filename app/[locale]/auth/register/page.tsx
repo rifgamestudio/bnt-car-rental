@@ -55,15 +55,17 @@ export default function RegisterPage() {
         currentUserId = signUpData.user?.id;
       }
 
-      // 2. Actualizamos el perfil con los datos adicionales
+      if (!currentUserId) throw new Error("No user ID found");
+
+      // 2. ACTUALIZACIÓN: Usamos upsert para asegurar que el perfil se cree o se actualice correctamente
       const { error: profileError } = await supabase
         .from('profiles')
-        .update({
+        .upsert({
+          id: currentUserId,
           full_name: `${formData.firstName} ${formData.lastName}`.trim(),
           phone: formData.phone,
           country: formData.country,
-        })
-        .eq('id', currentUserId);
+        });
 
       if (profileError) throw profileError;
 

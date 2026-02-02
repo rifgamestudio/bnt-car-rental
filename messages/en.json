@@ -240,5 +240,11 @@
     "btn_confirm": "CONFIRM RESERVATION",
     "processing": "PROCESSING...",
     "success_alert": "Reservation sent successfully! You will be redirected to your bookings."
+  },  
+  "Home": {
+    "fleet_title": "Our Vehicles",
+    "fleet_subtitle": "Find the car that suits you by browsing our fleet.",
+    "hero_title_1": "PREMIUM COMFORT",
+    "hero_title_2": "AN AFFORDABLE PRICE"
   }
 }

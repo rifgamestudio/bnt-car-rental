@@ -240,5 +240,11 @@
     "btn_confirm": "RESERVERING BEVESTIGEN",
     "processing": "VERWERKEN...",
     "success_alert": "Reservering succesvol verzonden! U wordt doorgestuurd naar uw boekingen."
+  },
+    "Home": {
+    "fleet_title": "Onze voertuigen",
+    "fleet_subtitle": "Vind de auto die bij u past door ons wagenpark te bekijken.",
+    "hero_title_1": "PREMIUM COMFORT",
+    "hero_title_2": "EEN BETAALBARE PRIJS"
   }
 }
