@@ -16,7 +16,6 @@ export default function HomePage({ params }: { params: Promise<{ locale: Locale 
   const t = useTranslations('Notifications');
   const th = useTranslations('Home');
 
-  // Lógica para arrastrar con el ratón
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -36,7 +35,7 @@ export default function HomePage({ params }: { params: Promise<{ locale: Locale 
     if (!isDragging || !scrollRef.current) return;
     e.preventDefault();
     const x = e.pageX - scrollRef.current.offsetLeft;
-    const walk = (x - startX) * 2; // Velocidad de desplazamiento
+    const walk = (x - startX) * 2;
     scrollRef.current.scrollLeft = scrollLeft - walk;
   };
 
@@ -59,7 +58,6 @@ export default function HomePage({ params }: { params: Promise<{ locale: Locale 
   return (
     <main className="w-full flex flex-col bg-[#f3f4f6] min-h-screen text-black">
       
-      {/* 2. BLOQUEO SI EL PERFIL ESTÁ INCOMPLETO */}
       {isProfileIncomplete ? (
         <div className="flex-1 flex items-center justify-center p-6 bg-white">
           <div className="max-w-md w-full text-center space-y-6 animate-in fade-in zoom-in duration-500">
@@ -88,23 +86,21 @@ export default function HomePage({ params }: { params: Promise<{ locale: Locale 
           </div>
         </div>
       ) : (
-        /* 3. CONTENIDO NORMAL DE LA HOME */
         <>
           <div className="relative w-full min-h-[600px] flex flex-col items-center pt-14 px-6">
             
-            {/* IMAGEN DEL COCHE SUBIDA A LA ZONA DE NAVBAR */}
-            <div className="absolute top-[25px] w-full max-w-[1200px] z-[60] flex justify-end pr-10 md:pr-20 pointer-events-none">
+            {/* IMAGEN DEL COCHE: Mitad en Navbar, Mitad en Página. Z-index menor que Navbar */}
+            <div className="absolute top-[-15px] w-full max-w-[1200px] z-[50] flex justify-end pr-5 md:pr-20 pointer-events-none">
               <img 
                 src="/coche.avif" 
                 alt="Car BNT" 
-                className="w-[140px] md:w-[200px] h-auto object-contain drop-shadow-[0_10px_10px_rgba(0,0,0,0.15)]"
+                className="w-[90px] md:w-[140px] h-auto object-contain drop-shadow-[0_10px_10px_rgba(0,0,0,0.15)]"
               />
             </div>
 
             <div className="relative z-50 w-full flex flex-col items-center">
               <SearchWidget />
 
-              {/* SECCIÓN "NOS VÉHICULES" */}
               <div className="mt-12 w-full max-w-6xl text-center">
                 <h2 className="text-[#a12b2b] text-3xl md:text-4xl font-bold mb-2">
                   {th('fleet_title')}
@@ -114,7 +110,6 @@ export default function HomePage({ params }: { params: Promise<{ locale: Locale 
                 </p>
 
                 <div className="relative px-4">
-                  {/* Contenedor Arrastrable - BARRA ELIMINADA CON CLASES NATIVAS */}
                   <div 
                     ref={scrollRef}
                     onMouseDown={handleMouseDown}
