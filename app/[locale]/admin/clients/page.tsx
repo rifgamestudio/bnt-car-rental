@@ -26,7 +26,7 @@ interface ClientProfile {
   rental_history?: string | string[]; // Ajustado para manejar múltiples notas
 }
 
-// CORRECCIÓN: En Next.js 15 recibimos params como una Promesa
+// CORRECCIÓN: En Next.js 15 recibimos pparams como una Promesa
 export default function AdminClientsPage({ params }: { params: Promise<{ locale: string }> }) {
   const t = useTranslations('AdminClients');
   
