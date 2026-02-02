@@ -1,6 +1,6 @@
 "use client";
 export const dynamic = 'force-dynamic';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react'; // Añadido Suspense
 import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
@@ -15,7 +15,7 @@ import {
   Briefcase, 
   Settings, 
   Loader2,
-  X // Importado para el modal
+  X 
 } from 'lucide-react';
 
 interface CarDetails {
@@ -29,7 +29,8 @@ interface CarDetails {
   ac: boolean;
 }
 
-export default function CheckoutPage() {
+// 1. MOVEMOS LA LÓGICA A ESTE COMPONENTE PARA QUE SUSPENSE PUEDA ENVOLVERLO
+function CheckoutContent() {
   const t = useTranslations('Checkout');
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -40,7 +41,7 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
-  const [showModal, setShowModal] = useState(false); // Estado para el modal de éxito
+  const [showModal, setShowModal] = useState(false); 
 
   // Datos de la URL
   const carId = searchParams.get('carId');
@@ -83,24 +84,20 @@ export default function CheckoutPage() {
     setSubmitting(true);
 
     try {
-      // Insertar en la tabla bookings
       const { error } = await supabase.from('bookings').insert({
         user_id: user.id,
-        // Guardamos el coche solicitado (aunque el admin puede cambiarlo luego si quiere)
         car_id: carId, 
         pickup_location: pickupLoc,
         return_location: returnLoc,
         pickup_date: pickupDate,
         return_date: returnDate,
-        pickup_time: '10:30', // Hora por defecto o traerla del widget si la tienes
+        pickup_time: '10:30',
         return_time: '10:30',
         total_price: Number(price),
-        status: 'pending' // Importante: Se crea como pendiente de aprobación
+        status: 'pending' 
       });
 
       if (error) throw error;
-
-      // Éxito: Mostramos el modal en lugar del alert
       setShowModal(true);
 
     } catch (err: any) {
@@ -187,7 +184,7 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {/* INCLUSIONES (Estilo lista verde de tu imagen) */}
+            {/* INCLUSIONES */}
             <div className="mb-8">
               <h4 className="font-black text-sm uppercase mb-4">{t('included_title')}</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs font-bold text-gray-600">
@@ -227,7 +224,7 @@ export default function CheckoutPage() {
         </div>
       </div>
 
-      {/* VENTANA EMERGENTE DE CONFIRMACIÓN (MODAL) */}
+      {/* VENTANA EMERGENTE DE CONFIRMACIÓN */}
       {showModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl scale-in-center border border-gray-100">
@@ -248,5 +245,14 @@ export default function CheckoutPage() {
       )}
 
     </div>
+  );
+}
+
+// 2. EXPORTAMOS LA PÁGINA ENVUELTA EN SUSPENSE (OBLIGATORIO PARA VERCEL)
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-black flex items-center justify-center text-white uppercase font-black tracking-widest animate-pulse">Chargement...</div>}>
+      <CheckoutContent />
+    </Suspense>
   );
 }
