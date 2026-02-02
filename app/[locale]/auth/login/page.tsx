@@ -107,7 +107,7 @@ export default function LoginPage() {
 
         <div className="mt-8 pt-6 border-t border-gray-50 text-center">
           <p className="text-[10px] text-gray-400 font-bold uppercase mb-3 tracking-tighter">{t("no_account")}</p>
-          {/* CORRECCIÓN: Texto centrado perfectamente */}
+          {/* CORRECCIÓN: Teeexto centrado perfectamente */}
           <button
             onClick={() => router.push("/auth/register")}
             className="w-full h-12 bg-gray-100 text-black rounded-xl font-black text-xs uppercase tracking-widest hover:bg-gray-200 transition flex items-center justify-center"
