@@ -89,12 +89,12 @@ export default function HomePage({ params }: { params: Promise<{ locale: Locale 
         <>
           <div className="relative w-full min-h-[600px] flex flex-col items-center pt-14 px-6">
             
-            {/* IMAGEN DEL COCHE: Mitad en Navbar, Mitad en Página. Z-index menor que Navbar */}
-            <div className="absolute top-[-15px] w-full max-w-[1200px] z-[50] flex justify-end pr-5 md:pr-20 pointer-events-none">
+            {/* IMAGEN DEL COCHE: Posicionada sobre el SearchWidget con z-[60] */}
+            <div className="absolute top-[40px] w-full max-w-[1200px] z-[60] flex justify-end pr-5 md:pr-20 pointer-events-none">
               <img 
                 src="/coche.avif" 
                 alt="Car BNT" 
-                className="w-[90px] md:w-[140px] h-auto object-contain drop-shadow-[0_10px_10px_rgba(0,0,0,0.15)]"
+                className="w-[120px] md:w-[170px] h-auto object-contain drop-shadow-[0_10px_10px_rgba(0,0,0,0.15)]"
               />
             </div>
 
