@@ -1,6 +1,6 @@
 "use client";
 export const dynamic = 'force-dynamic';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react'; // Añadido Suspense
 import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { useTranslations } from 'next-intl';
@@ -15,7 +15,7 @@ import {
   Car as CarIcon,
   Calendar
 } from 'lucide-react';
-import { Link, useRouter } from '@/navigation'; // Importamos useRouter de nuestra configuración
+import { Link, useRouter } from '@/navigation'; 
 
 interface Car {
   id: string;
@@ -33,20 +33,19 @@ interface Car {
   status: string;
 }
 
-export default function ResultsPage() {
+// 1. MOVEMOS TODA LA LÓGICA A ESTE COMPONENTE INTERNO
+function ResultsContent() {
   const t = useTranslations('Results');
   const searchParams = useSearchParams();
-  const router = useRouter(); // Inicializamos el router
+  const router = useRouter(); 
   
   const [cars, setCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 1. Obtener datos de la URL
   const airport = searchParams.get('airport');
   const from = searchParams.get('from');
   const to = searchParams.get('to');
 
-  // 2. Calcular días totales (Diferencia real de días)
   const startDate = from ? new Date(from) : new Date();
   const endDate = to ? new Date(to) : new Date();
   const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
@@ -71,21 +70,16 @@ export default function ResultsPage() {
     fetchAvailableCars();
   }, []);
 
-  // 3. FUNCIÓN CORREGIDA: Calcula el total basado exactamente en diffDays
   const calculateCarTotal = (priceLow: number, priceHigh: number) => {
     let total = 0;
     let currentDay = new Date(startDate);
-
-    // Ejecutamos el bucle tantas veces como días hay de diferencia
     for (let i = 0; i < diffDays; i++) {
       const month = currentDay.getMonth();
-      // Julio (6) o Agosto (7)
       if (month === 6 || month === 7) {
         total += Number(priceHigh);
       } else {
         total += Number(priceLow);
       }
-      // Avanzamos un día para la siguiente iteración (por si cambia el mes)
       currentDay.setDate(currentDay.getDate() + 1);
     }
     return total;
@@ -102,7 +96,6 @@ export default function ResultsPage() {
 
   return (
     <main className="min-h-screen bg-[#f3f4f6] pb-20 text-black font-sans">
-      {/* BARRA DE RESUMEN SUPERIOR */}
       <div className="bg-white border-b border-zinc-200 py-6 px-6 sticky top-[60px] z-30 shadow-sm">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-4">
@@ -137,15 +130,11 @@ export default function ResultsPage() {
             </div>
           ) : (
             cars.map((car) => {
-              // Calculamos el total con la lógica de temporadas corregida
               const carTotal = calculateCarTotal(car.price_low, car.price_high);
-              // Calculamos el promedio diario real para mostrarlo
               const averagePerDay = Math.round(carTotal / diffDays);
               
               return (
                 <div key={car.id} className="bg-white rounded-3xl shadow-xl overflow-hidden border border-zinc-100 flex flex-col md:flex-row hover:border-[#ff5f00]/30 transition-all duration-300 group">
-                  
-                  {/* IMAGEN */}
                   <div className="md:w-1/3 bg-white p-8 flex items-center justify-center relative border-b md:border-b-0 md:border-r border-zinc-50">
                     <img 
                       src={car.image_url} 
@@ -154,7 +143,6 @@ export default function ResultsPage() {
                     />
                   </div>
 
-                  {/* INFO TÉCNICA */}
                   <div className="md:w-1/3 p-10 flex flex-col justify-center">
                     <span className="text-[#ff5f00] font-black text-[10px] uppercase tracking-[0.3em] mb-3 italic">
                       {car.category}
@@ -188,7 +176,6 @@ export default function ResultsPage() {
                     </div>
                   </div>
 
-                  {/* PRECIO Y BOTÓN */}
                   <div className="md:w-1/3 bg-zinc-50/50 p-10 flex flex-col items-center md:items-end justify-center border-t md:border-t-0 md:border-l border-zinc-100">
                     <div className="flex items-center gap-2 mb-2">
                       <ShieldCheck className="text-green-600 w-4 h-4" />
@@ -205,7 +192,6 @@ export default function ResultsPage() {
                       </p>
                     </div>
 
-                    {/* BOTÓN RÉSERVER ACTUALIZADO CON NAVEGACIÓN */}
                     <button 
                       onClick={() => {
                         router.push(`/booking/checkout?carId=${car.id}&price=${carTotal}&from=${from}&to=${to}&pickup=${airport}&return=${airport}`);
@@ -219,7 +205,6 @@ export default function ResultsPage() {
                       Conditions de location
                     </button>
                   </div>
-
                 </div>
               );
             })
@@ -227,5 +212,19 @@ export default function ResultsPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+// 2. EXPORT PRINCIPAL ENVUELTO EN SUSPENSE (REQUERIDO POR VERCEL)
+export default function ResultsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#f3f4f6]">
+        <Loader2 className="w-12 h-12 animate-spin text-[#ff5f00] mb-4" />
+        <p className="font-black uppercase text-xs tracking-widest text-zinc-400">Chargement des résultats...</p>
+      </div>
+    }>
+      <ResultsContent />
+    </Suspense>
   );
 }
