@@ -1,13 +1,16 @@
 import { createNavigation } from 'next-intl/navigation';
 import { defineRouting } from 'next-intl/routing';
 
-// 1. Definimos la configuración de las rutas
 export const routing = defineRouting({
+  // Tus 3 idiomas
   locales: ['en', 'fr', 'nl'],
+  
+  // Idioma por defecto si no detecta ninguno
   defaultLocale: 'en',
+  
+  // Forzar que siempre aparezca el prefijo en la URL (ej: /en/login)
   localePrefix: 'always'
 });
 
-// 2. Exportamos los hooks de navegación corregidos
 export const { Link, redirect, usePathname, useRouter, getPathname } =
   createNavigation(routing);

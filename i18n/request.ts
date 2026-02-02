@@ -1,21 +1,17 @@
 import { getRequestConfig } from 'next-intl/server';
-import { notFound } from 'next/navigation';
-
-// 1. Idiomas soportados
-const locales = ['en', 'fr', 'nl'];
+import { routing } from '@/navigation';
 
 export default getRequestConfig(async ({ requestLocale }) => {
-  // 2. Esperamos el locale (es una Promesa en Next.js 15)
-  const locale = await requestLocale;
+  // Next.js 15: Esperar el locale de la solicitud
+  let locale = await requestLocale;
 
-  // 3. Validación de seguridad: Si no hay locale o no está en la lista, 404
-  if (!locale || !locales.includes(locale as any)) {
-    notFound();
+  // Si el locale no es válido o es null, usar el por defecto (en)
+  if (!locale || !routing.locales.includes(locale as any)) {
+    locale = routing.defaultLocale;
   }
 
   return {
-    // 4. Forzamos que locale sea tratado como string para que TS no se queje
-    locale: locale as string,
+    locale, // Devolver el locale explícitamente es obligatorio ahora
     messages: (await import(`../messages/${locale}.json`)).default
   };
 });

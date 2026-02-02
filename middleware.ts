@@ -4,6 +4,6 @@ import { routing } from './navigation';
 export default createMiddleware(routing);
 
 export const config = {
-  // Coincidir con todas las rutas excepto las internas de Next.js
+  // Matcher preciso para ignorar archivos internos, imágenes, etc.
   matcher: ['/', '/(en|fr|nl)/:path*']
 };
