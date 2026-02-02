@@ -52,19 +52,19 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-black text-white h-[60px] flex items-center justify-between px-3 md:px-20 sticky top-0 z-[100]">
+    <nav className="bg-black text-white h-[60px] flex items-center justify-between px-2 md:px-20 sticky top-0 z-[9999]">
       {/* Logo y Menú Principal */}
-      <div className="flex items-center gap-3 md:gap-10">
-        <Link href="/" className="hover:opacity-80 transition no-underline">
+      <div className="flex items-center gap-2 md:gap-10">
+        <Link href="/" className="hover:opacity-80 transition no-underline flex-shrink-0">
           <img 
             src="/logo.png" 
             alt="BNT Logo" 
-            className="h-9 md:h-12 w-auto object-contain" 
+            className="h-8 md:h-12 w-auto object-contain" 
           />
         </Link>
 
-        {/* MENÚ PRINCIPAL (ACCUEIL & CONTACT) - Ahora visible en móvil */}
-        <div className="flex items-center gap-3 md:gap-8 text-[10px] md:text-[11px] font-bold uppercase tracking-wider">
+        {/* MENÚ PRINCIPAL (ACCUEIL & CONTACT) - Asegurado para móvil */}
+        <div className="flex items-center gap-3 md:gap-8 text-[9px] md:text-[11px] font-bold uppercase tracking-wider flex-shrink-0">
           <Link href="/" className="hover:underline decoration-1 underline-offset-4 text-white no-underline transition-all">
             {t('home') || 'Accueil'}
           </Link>
@@ -75,30 +75,29 @@ export default function Navbar() {
       </div>
 
       {/* Menú Derecha */}
-      <div className="flex items-center gap-3 md:gap-6 text-[10px] md:text-[11px] font-bold uppercase tracking-wider">
+      <div className="flex items-center gap-2 md:gap-6 text-[9px] md:text-[11px] font-bold uppercase tracking-wider">
         
         {role === 'admin' ? (
-          <Link href="/admin/users" className="flex items-center gap-2 cursor-pointer text-[#ff5f00] hover:text-white transition-colors no-underline">
+          <Link href="/admin/users" className="flex items-center gap-1 cursor-pointer text-[#ff5f00] hover:text-white transition-colors no-underline">
             <LayoutDashboard className="w-4 h-4" />
-            <span className="hidden sm:inline">PANEL ADMIN</span>
+            <span className="hidden sm:inline">ADMIN</span>
           </Link>
         ) : (
-          <Link href="/booking" className="flex items-center gap-2 cursor-pointer hover:underline decoration-1 underline-offset-4 text-white no-underline">
+          <Link href="/booking" className="flex items-center gap-1 cursor-pointer hover:underline decoration-1 underline-offset-4 text-white no-underline">
             <Car className="w-4 h-4" />
             <span className="hidden sm:inline">{t('manage')}</span>
           </Link>
         )}
 
-        {/* Selector de Idioma CORREGIDO para móvil */}
+        {/* Selector de Idioma CORREGIDO para móvil con alta prioridad de capa */}
         <div 
           className="relative flex items-center gap-1 md:gap-2 cursor-pointer py-4"
           onClick={() => setIsLangOpen(!isLangOpen)}
-          onMouseLeave={() => setIsLangOpen(false)}
         >
           <Globe className="w-4 h-4 text-gray-400" />
           <span className="uppercase">{locale}</span>
           
-          <div className={`absolute top-full right-0 bg-white text-black shadow-2xl rounded-md overflow-hidden min-w-[100px] border border-gray-100 ${isLangOpen ? 'block' : 'hidden'}`}>
+          <div className={`absolute top-full right-0 bg-white text-black shadow-2xl rounded-md overflow-hidden min-w-[100px] border border-gray-100 z-[10000] ${isLangOpen ? 'block' : 'hidden'}`}>
             {['en', 'fr', 'nl'].map((lang) => (
               <div 
                 key={lang} 
@@ -116,20 +115,20 @@ export default function Navbar() {
 
         {/* Zona de Usuario */}
         {user ? (
-          <div className="flex items-center gap-3 md:gap-5">
-            <Link href="/profile" className="flex items-center gap-2 cursor-pointer hover:underline decoration-1 underline-offset-4 text-white no-underline">
-              <div className={`w-2 h-2 rounded-full ${status === 'verified' || role === 'admin' ? 'bg-green-500' : 'bg-orange-500 animate-pulse'}`}></div>
-              <span className="truncate max-w-[80px] md:max-w-none text-white">
+          <div className="flex items-center gap-2 md:gap-5">
+            <Link href="/profile" className="flex items-center gap-1 cursor-pointer hover:underline decoration-1 underline-offset-4 text-white no-underline">
+              <div className={`w-2 h-2 rounded-full flex-shrink-0 ${status === 'verified' || role === 'admin' ? 'bg-green-500' : 'bg-orange-500 animate-pulse'}`}></div>
+              <span className="truncate max-w-[60px] md:max-w-none text-white">
                 {getDisplayName()}
               </span>
             </Link>
             
-            <button onClick={handleLogout} className="text-gray-400 hover:text-white transition-colors" title="Cerrar sesión">
+            <button onClick={handleLogout} className="text-gray-400 hover:text-white transition-colors bg-transparent border-none p-0" title="Cerrar sesión">
               <LogOut className="w-4 h-4" />
             </button>
           </div>
         ) : (
-          <Link href="/auth/login" className="flex items-center gap-2 cursor-pointer hover:underline decoration-1 underline-offset-4 text-white no-underline">
+          <Link href="/auth/login" className="flex items-center gap-1 cursor-pointer hover:underline decoration-1 underline-offset-4 text-white no-underline">
             <User className="w-4 h-4" />
             <span className="hidden xs:inline">{t('login')}</span>
           </Link>
