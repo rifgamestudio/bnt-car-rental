@@ -1,24 +1,31 @@
 "use client";
 import React from 'react';
 import { Link, usePathname } from '@/navigation';
-// AÑADIDO: ShieldCheck para la sección de clientes verificados
-import { Users, Car, Calendar, LogOut, LayoutDashboard, ShieldCheck } from 'lucide-react';
+import { Users, Car, Calendar, LogOut, ShieldCheck } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
-export default function AdminSidebar() {
+interface SidebarProps {
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+}
+
+export default function AdminSidebar({ isOpen, setIsOpen }: SidebarProps) {
   const pathname = usePathname();
   const { signOut } = useAuth();
 
-  // LISTA ACTUALIZADA: Separamos Usuarios de Clients y añadimos Réservations
   const menuItems = [
-    { name: 'Utilisateurs', href: '/admin/users', icon: Users },      // El "limbo" (DNI por validar)
-    { name: 'Clients', href: '/admin/clients', icon: ShieldCheck },   // Clientes verificados
-    { name: 'Voitures', href: '/admin/cars', icon: Car },             // Gestión de flota
-    { name: 'Réservations', href: '/admin/bookings', icon: Calendar }, // Gestión de reservas y asignación
+    { name: 'Utilisateurs', href: '/admin/users', icon: Users },
+    { name: 'Clients', href: '/admin/clients', icon: ShieldCheck },
+    { name: 'Voitures', href: '/admin/cars', icon: Car },
+    { name: 'Réservations', href: '/admin/bookings', icon: Calendar },
   ];
 
   return (
-    <aside className="w-64 bg-black h-screen sticky top-0 flex flex-col border-r border-zinc-800 text-white">
+    <aside className={`
+      fixed inset-y-0 left-0 z-[9999] w-64 bg-black border-r border-zinc-800 transition-transform duration-300 ease-in-out
+      lg:sticky lg:translate-x-0 lg:h-screen
+      ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+    `}>
       <div className="p-8">
         <h1 className="text-3xl font-black italic tracking-tighter text-[#ff5f00]">BNT ADMIN</h1>
       </div>
@@ -30,6 +37,7 @@ export default function AdminSidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={() => setIsOpen(false)} // Cierra el menú al hacer clic en móvil
               className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all no-underline ${
                 isActive 
                 ? 'bg-[#ff5f00] text-white shadow-[0_0_20px_rgba(255,95,0,0.3)]' 
@@ -46,7 +54,7 @@ export default function AdminSidebar() {
       <div className="p-4 border-t border-zinc-800">
         <button 
           onClick={signOut}
-          className="flex items-center gap-3 px-4 py-3 w-full text-zinc-500 hover:text-red-500 transition-colors font-bold uppercase text-xs tracking-widest"
+          className="flex items-center gap-3 px-4 py-3 w-full text-zinc-500 hover:text-red-500 transition-colors font-bold uppercase text-xs tracking-widest bg-transparent border-none"
         >
           <LogOut className="w-5 h-5" />
           Cerrar Sesión
