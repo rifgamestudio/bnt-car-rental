@@ -1,13 +1,12 @@
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, setRequestLocale } from 'next-intl/server'; // Importar setRequestLocale
+import { getMessages, setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/navigation';
 import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer'; // Importamos el Footer épico
-import { AuthProvider } from '@/context/AuthContext';
+import Footer from '@/components/Footer';
+import { AuthProvider } from '../../context/AuthContext'; // <--- IMPORTACIÓN UNIFICADA
 import "./../globals.css";
 
-// Generar rutas estáticas para rendimiento (Opcional pero recomendado)
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({locale}));
 }
@@ -18,15 +17,11 @@ export default async function LocaleLayout(props: {
 }) {
   const { locale } = await props.params;
 
-  // 1. Validar que el idioma existe, si no 404
   if (!routing.locales.includes(locale as any)) {
     notFound();
   }
 
-  // 2. IMPORTANTE: Configurar el locale para este renderizado
   setRequestLocale(locale);
-
-  // 3. Cargar los mensajes FORZANDO el locale actual
   const messages = await getMessages({ locale });
 
   return (
@@ -35,12 +30,18 @@ export default async function LocaleLayout(props: {
         <NextIntlClientProvider messages={messages} locale={locale}>
           <AuthProvider>
             <div className="flex flex-col min-h-screen">
-              <Navbar />
+              <div className="public-element">
+                <Navbar />
+              </div>
+
               <main className="flex-grow">
                 {props.children}
               </main>
-              {/* FOOTER AÑADIDO AL FINAL DEL CONTENEDOR PRINCIPAL */}
-              <Footer />
+
+              <div className="public-element">
+                {/* Opcional: Footer si lo tienes */}
+                <Footer />
+              </div>
             </div>
           </AuthProvider>
         </NextIntlClientProvider>

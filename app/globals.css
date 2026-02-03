@@ -14,7 +14,26 @@ body {
   box-sizing: border-box;
 }
 
-/* Estilo para que el fondo de la web sea el gris claro de Sixt */
-html, body {
-  height: 100%;
+/* --- SOLUCIÓN AL LOGO ENCIMADO --- */
+
+/* 
+   Si el cuerpo de la página detecta el contenedor del admin,
+   escondemos automáticamente la Navbar y el Footer públicos.
+*/
+body:has(.admin-layout-container) .public-element {
+  display: none !important;
+}
+
+/* Ajuste para que el panel admin use todo el alto en Next.js 15 */
+body:has(.admin-layout-container) main {
+  padding-top: 0 !important;
+}
+
+/* Scrollbar fina para el menú admin */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 10px;
 }

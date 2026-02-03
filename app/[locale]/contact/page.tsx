@@ -56,8 +56,8 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <p className="text-[#ff5f00] text-[10px] font-black uppercase tracking-[0.2em] mb-2">Localisation</p>
-                  <p className="text-white font-bold text-xl uppercase italic tracking-tighter">Aéroport Nador El Aroui</p>
-                  <p className="text-zinc-500 text-sm mt-1">Nador, Maroc. Service de livraison à l'aéroport et environs.</p>
+                  <p className="text-white font-bold text-xl uppercase italic tracking-tighter">Agence Rabat</p>
+                  <p className="text-zinc-500 text-sm mt-1">2 RUE ANNABIA SECT 11, RABAT</p>
                 </div>
               </div>
             </div>

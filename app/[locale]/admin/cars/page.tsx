@@ -14,10 +14,10 @@ import {
   Upload,
   Loader2,
   Trash2,
-  Users, // Icono para asientos
-  DoorOpen, // Icono para puertas
-  Wind, // Icono para AC
-  Gauge // Icono para kilometraje
+  Users, 
+  DoorOpen, 
+  Wind, 
+  Gauge 
 } from 'lucide-react';
 
 interface Car {
@@ -31,7 +31,6 @@ interface Car {
   image_url: string;
   images_gallery: string[];
   assigned_user_id: string | null;
-  // NUEVOS CAMPOS INTERFACE
   seats: number;
   doors: number;
   ac: boolean;
@@ -59,9 +58,6 @@ export default function AdminCarsPage() {
   const [fileToUpload, setFileToUpload] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   
-  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
-  const [galleryPreviews, setGalleryPreviews] = useState<string[]>([]);
-
   const [newCar, setNewCar] = useState({
     brand: '',
     model: '',
@@ -69,8 +65,6 @@ export default function AdminCarsPage() {
     price_low: 0,
     price_high: 0,
     image_url: '',
-    images_gallery: [] as string[],
-    // NUEVOS CAMPOS ESTADO INICIAL
     seats: 5,
     doors: 5,
     ac: true,
@@ -110,27 +104,6 @@ export default function AdminCarsPage() {
     }
   };
 
-  const handleGalleryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newFiles = Array.from(e.target.files || []);
-    const combinedFiles = [...galleryFiles, ...newFiles];
-
-    if (combinedFiles.length > 5) {
-      alert("Máximo 5 fotos permitidas en la galería.");
-      return;
-    }
-
-    setGalleryFiles(combinedFiles);
-    const newPreviews = combinedFiles.map(file => URL.createObjectURL(file));
-    setGalleryPreviews(newPreviews);
-  };
-
-  const removeGalleryImage = (index: number) => {
-    const updatedFiles = galleryFiles.filter((_, i) => i !== index);
-    setGalleryFiles(updatedFiles);
-    const updatedPreviews = galleryPreviews.filter((_, i) => i !== index);
-    setGalleryPreviews(updatedPreviews);
-  };
-
   const handleEditClick = (car: Car) => {
     setEditingCarId(car.id);
     setNewCar({
@@ -140,8 +113,6 @@ export default function AdminCarsPage() {
       price_low: car.price_low,
       price_high: car.price_high,
       image_url: car.image_url,
-      images_gallery: car.images_gallery || [],
-      // NUEVOS CAMPOS EDICIÓN
       seats: car.seats || 5,
       doors: car.doors || 5,
       ac: car.ac !== undefined ? car.ac : true,
@@ -150,8 +121,7 @@ export default function AdminCarsPage() {
       mileage: car.mileage || 'Illimité'
     });
     setPreviewUrl(car.image_url);
-    setGalleryPreviews(car.images_gallery || []);
-    setGalleryFiles([]); 
+    setFileToUpload(null); 
     setIsModalOpen(true);
   };
 
@@ -164,18 +134,6 @@ export default function AdminCarsPage() {
     } else {
       fetchCars();
     }
-  };
-
-  const handleAction = async (carId: string, userId: string, action: 'approve' | 'deny') => {
-    const newStatus = action === 'approve' ? 'rented' : 'available';
-    await supabase.from('cars').update({ status: newStatus, assigned_user_id: action === 'approve' ? userId : null }).eq('id', carId);
-    
-    await supabase.from('notifications').insert({
-      user_id: userId,
-      title: action === 'approve' ? 'Réservation Approuvée' : 'Réservation Refusée',
-      message: action === 'approve' ? 'Votre demande a été acceptée !' : 'Désolé, votre demande a été refusée.'
-    });
-    fetchCars();
   };
 
   const handleSaveCar = async (e: React.FormEvent) => {
@@ -194,19 +152,6 @@ export default function AdminCarsPage() {
         finalImageUrl = urlData.publicUrl;
       }
 
-      let finalGalleryUrls = [...newCar.images_gallery];
-      if (galleryFiles.length > 0) {
-        for (const file of galleryFiles) {
-          const sanitizedName = file.name.replace(/\s+/g, '_').replace(/[^\w.-]/g, '');
-          const fileName = `${Date.now()}_gal_${sanitizedName}`;
-          const { error: galError } = await supabase.storage.from('cars').upload(`cars_flota/${fileName}`, file);
-          if (!galError) {
-            const { data: urlData } = supabase.storage.from('cars').getPublicUrl(`cars_flota/${fileName}`);
-            finalGalleryUrls.push(urlData.publicUrl);
-          }
-        }
-      }
-
       const carData = {
         brand: newCar.brand,
         model: newCar.model,
@@ -214,9 +159,8 @@ export default function AdminCarsPage() {
         price_low: newCar.price_low,
         price_high: newCar.price_high,
         image_url: finalImageUrl,
-        images_gallery: finalGalleryUrls.slice(0, 5),
+        images_gallery: [], // Galería vacía al haber quitado la función
         status: 'available',
-        // NUEVOS CAMPOS DATA
         seats: newCar.seats,
         doors: newCar.doors,
         ac: newCar.ac,
@@ -237,9 +181,7 @@ export default function AdminCarsPage() {
       setEditingCarId(null);
       setPreviewUrl(null);
       setFileToUpload(null);
-      setGalleryFiles([]);
-      setGalleryPreviews([]);
-      setNewCar({ brand: '', model: '', plate: '', price_low: 0, price_high: 0, image_url: '', images_gallery: [], seats: 5, doors: 5, ac: true, category: 'ECONOMIQUE', transmission: 'Manuelle', mileage: 'Illimité' });
+      setNewCar({ brand: '', model: '', plate: '', price_low: 0, price_high: 0, image_url: '', seats: 5, doors: 5, ac: true, category: 'ECONOMIQUE', transmission: 'Manuelle', mileage: 'Illimité' });
       fetchCars();
 
     } catch (err: any) {
@@ -258,15 +200,14 @@ export default function AdminCarsPage() {
     <div className="space-y-8 text-white relative">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-4xl font-black italic uppercase tracking-tighter">Flotte BNT</h2>
+          <h2 className="text-4xl font-black italic uppercase tracking-tighter">Véhicule BNT</h2>
           <p className="text-zinc-500 text-xs font-bold uppercase mt-1">Gestion de l'inventaire et des réservations actives</p>
         </div>
         <button 
           onClick={() => {
             setEditingCarId(null);
-            setNewCar({ brand: '', model: '', plate: '', price_low: 0, price_high: 0, image_url: '', images_gallery: [], seats: 5, doors: 5, ac: true, category: 'ECONOMIQUE', transmission: 'Manuelle', mileage: 'Illimité' });
+            setNewCar({ brand: '', model: '', plate: '', price_low: 0, price_high: 0, image_url: '', seats: 5, doors: 5, ac: true, category: 'ECONOMIQUE', transmission: 'Manuelle', mileage: 'Illimité' });
             setPreviewUrl(null);
-            setGalleryPreviews([]);
             setIsModalOpen(true);
           }}
           className="bg-[#ff5f00] text-white px-6 py-3 rounded-xl font-black text-xs uppercase flex items-center gap-2 hover:scale-105 transition-all shadow-lg"
@@ -312,9 +253,6 @@ export default function AdminCarsPage() {
                   <td className="px-8 py-6">
                     <div className="w-32 h-20 bg-black rounded-xl overflow-hidden border border-zinc-800 relative">
                       <img src={car.image_url} className="w-full h-full object-contain p-2" alt="Voiture" />
-                      <div className="absolute top-1 right-1 bg-black/60 px-1.5 py-0.5 rounded text-[8px] flex items-center gap-1 font-bold">
-                         <ImageIcon className="w-2.5 h-2.5 text-[#ff5f00]" /> {1 + (car.images_gallery?.length || 0)}
-                      </div>
                     </div>
                   </td>
                   <td className="px-8 py-6">
@@ -365,7 +303,7 @@ export default function AdminCarsPage() {
               <h3 className="text-xl font-black italic uppercase tracking-tighter text-[#ff5f00]">
                 {editingCarId ? 'Modifier le Véhicule' : 'Nouveau Véhicule'}
               </h3>
-              <button onClick={() => {setIsModalOpen(false); setEditingCarId(null); setPreviewUrl(null); setGalleryPreviews([]);}} className="text-zinc-500 hover:text-white"><X /></button>
+              <button onClick={() => {setIsModalOpen(false); setEditingCarId(null); setPreviewUrl(null);}} className="text-zinc-500 hover:text-white"><X /></button>
             </div>
             
             <form onSubmit={handleSaveCar} className="p-8 space-y-6 max-h-[80vh] overflow-y-auto">
@@ -382,11 +320,10 @@ export default function AdminCarsPage() {
                 </div>
               </div>
 
-              {/* NUEVA FILA: CATEGORÍA Y TRANSMISIÓN */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase text-zinc-500">Catégorie</label>
-                  <select value={newCar.category} className="w-full bg-zinc-800 border border-zinc-700 rounded-xl p-3 outline-none focus:border-[#ff5f00] text-sm font-bold"
+                  <select value={newCar.category} className="w-full bg-zinc-800 border border-zinc-700 rounded-xl p-3 outline-none focus:border-[#ff5f00] text-sm font-bold text-white"
                     onChange={e => setNewCar({...newCar, category: e.target.value})}>
                     <option value="MINI">MINI</option>
                     <option value="ECONOMIQUE">ECONOMIQUE</option>
@@ -397,7 +334,7 @@ export default function AdminCarsPage() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase text-zinc-500">Transmission</label>
-                  <select value={newCar.transmission} className="w-full bg-zinc-800 border border-zinc-700 rounded-xl p-3 outline-none focus:border-[#ff5f00] text-sm font-bold"
+                  <select value={newCar.transmission} className="w-full bg-zinc-800 border border-zinc-700 rounded-xl p-3 outline-none focus:border-[#ff5f00] text-sm font-bold text-white"
                     onChange={e => setNewCar({...newCar, transmission: e.target.value})}>
                     <option value="Manuelle">Manuelle</option>
                     <option value="Automatique">Automatique</option>
@@ -405,7 +342,6 @@ export default function AdminCarsPage() {
                 </div>
               </div>
 
-              {/* NUEVA FILA: ASIENTOS, PUERTAS, KILOMETRAJE */}
               <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase text-zinc-500 flex items-center gap-1"><Users size={10}/> Sièges</label>
@@ -442,7 +378,6 @@ export default function AdminCarsPage() {
                 </div>
               </div>
 
-              {/* CAMPO AC (CLIMATIZACIÓN) */}
               <div className="flex items-center gap-2 bg-zinc-800 p-4 rounded-xl border border-zinc-700">
                 <Wind size={16} className={newCar.ac ? "text-blue-400" : "text-zinc-600"} />
                 <label className="text-[10px] font-black uppercase text-zinc-300 flex-1">Air Conditionné (AC)</label>
@@ -470,44 +405,8 @@ export default function AdminCarsPage() {
                 </label>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-zinc-500 tracking-widest">Galerie (Max 5 photos)</label>
-                
-                {galleryPreviews.length > 0 && (
-                  <div className="grid grid-cols-5 gap-2 mb-2">
-                    {galleryPreviews.map((url, i) => (
-                      <div key={i} className="aspect-square bg-zinc-800 rounded-lg overflow-hidden border border-zinc-700 relative group">
-                        <img src={url} className="w-full h-full object-cover" alt={`gallery-${i}`} />
-                        <button 
-                          type="button"
-                          onClick={() => removeGalleryImage(i)}
-                          className="absolute top-1 right-1 bg-red-600/80 p-1 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                <label className={`w-full py-4 border-2 border-dashed border-zinc-800 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:bg-zinc-800/50 transition-all ${galleryFiles.length >= 5 ? 'opacity-50 cursor-not-allowed' : ''}`}>
-                  <ImageIcon className="w-6 h-6 text-zinc-600 mb-1" />
-                  <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-tighter">
-                    {galleryFiles.length >= 5 ? 'Limite atteinte (5 photos)' : 'Ajouter des photos'}
-                  </span>
-                  <input 
-                    type="file" 
-                    multiple 
-                    accept="image/*" 
-                    className="hidden" 
-                    onChange={handleGalleryChange} 
-                    disabled={galleryFiles.length >= 5}
-                  />
-                </label>
-              </div>
-
               <button disabled={isSaving} type="submit" className="w-full bg-[#ff5f00] py-4 rounded-xl font-[1000] uppercase text-sm flex items-center justify-center gap-2 hover:bg-[#e65600] transition-all shadow-xl active:scale-95 italic">
-                {isSaving ? <Loader2 className="animate-spin" /> : (editingCarId ? "Mettre à jour le véhicule" : "Enregistrer dans la flotte BNT")}
+                {isSaving ? <Loader2 className="animate-spin" /> : (editingCarId ? "Mettre à jour le véhicule" : "Enregistrer le véhicule")}
               </button>
             </form>
           </div>
