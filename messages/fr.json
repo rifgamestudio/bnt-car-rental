@@ -2,7 +2,7 @@
   "Navbar": {
     "home": "Accueil",
     "contact": "Contact",
-    "manage": "Gérer les réservations",
+    "manage": "Réservations",
     "language": "Langue",
     "login": "Connexion | Inscription"
   },
@@ -45,11 +45,13 @@
     "category_eco": "ECONOMIQUE",
     "category_compact": "COMPACTE",
     "category_suv": "SUV",
-    "category_premium": "PREMIUM"
+    "category_premium": "PREMIUM",
+    "seats_text": "places",
+    "doors_text": "portes"
   },
   "Promo": {
     "discount": "JUSQU'À 15% DE RÉDUCTION",
-    "title": "LOCATION DE VOITURE POUR ENTREPRISES",
+    "title": "LOCATION DE VOITURE PARA ENTREPRISES",
     "body": "Profitez d’avantages et de tarifs spéciaux.",
     "button": "Inscrivez-vous gratuitement"
   },
@@ -71,10 +73,10 @@
     "last_name": "Nom de famille",
     "country_label": "Pays de résidence",
     "whatsapp_label": "Téléphone (WhatsApp)",
-    "country_placeholder": "Sélectionnez un pays",
+    "country_placeholder": "Pays de résidence",
     "btn_register": "CRÉER MON COMPTE"
   },
-  "Profile": {
+"Profile": {
     "title": "MON PROFIL BNT",
     "status_label": "STATUT",
     "status_unverified": "NON VÉRIFIÉ",
@@ -86,10 +88,27 @@
     "phone_label": "TÉLÉPHONE",
     "missing_phone": "Numéro manquant",
     "verify_title": "VÉRIFIEZ VOTRE IDENTITÉ",
-    "verify_desc": "Pour louer una voiture, nous devons valider vos documents pour des raisons légales et d’assurance.",
+    "verify_desc": "Pour louer una voiture, nous devons valider vos documents pour des razones legales et d’assurance.",
     "verified_title": "COMPTE VÉRIFIÉ !",
-    "verified_desc": "Vous avez désormais un accès complet pour louer n’importe quel véhicule de notre flotte premium.",
-    "btn_book": "Réserver una voiture"
+    "verified_desc": "Vous avez désormais un accès complet pour louer n’importe quel vehículo de notre flotte premium.",
+    "btn_book": "Réserver una voiture",
+    "status_header": "VOTRE COMPTE",
+    "status_subtitle": "Profil BNT Luxury",
+    "country_label": "PAYS",
+    "btn_save": "SAUVEGARDER",
+    "booking_header": "MA RÉSERVATION",
+    "booking_title": "VOTRE RÉSERVATION",
+    "car_label": "VÉHICULE",
+    "pickup_label": "PRISE EN CHARGE",
+    "return_label": "RETOUR",
+    "total_label": "MONTANT TOTAL",
+    "insurance_title": "ASSURANCE ACTIVE",
+    "insurance_desc": "COUVERTURE STANDARD INCLUSE",
+    "btn_details": "DÉTAILS",
+    "verifying_docs_title": "VÉRIFICATION EN COURS",
+    "verifying_docs_desc": "Votre documentation est en cours d'examen par notre équipe. Vous recevrez un e-mail de confirmation ou de refus de location sous peu.",
+    "active_bookings": "VOS RÉSERVATIONS ACTIVES",
+    "no_active_bookings": "Aucune réservation active. Votre historique est archivé."  
   },
   "Scanner": {
     "front": "FACE AVANT",
@@ -136,7 +155,7 @@
     "id_front": "Face avant DNI",
     "id_back": "Face arrière DNI / Permis",
     "no_image": "IMAGE NON DISPONIBLE",
-    "btn_reject": "Rejeter les documents",
+    "btn_reject": "Rejeter los documentos",
     "btn_approve": "Approuver le client"
   },
   "Sidebar": {
@@ -223,8 +242,8 @@
   },
   "Checkout": {
     "title": "DONNÉES DE RÉSERVATION",
-    "pickup": "RÉCUPÉRER LA VOITURE",
-    "dropoff": "RENDRE LA VOITURE",
+    "pickup": "Lieu de prise en charge",
+    "dropoff": "Lieu de restitution",
     "car_rental": "Location de voiture",
     "total": "TOTAL À PAYER",
     "included_title": "Inclus dans le prix",
@@ -239,12 +258,63 @@
     "terms": "J'ai lu et j'accepte les termes et conditions et la politique de confidentialité",
     "btn_confirm": "CONFIRMER LA RÉSERVATION",
     "processing": "TRAITEMENT EN COURS...",
-    "success_alert": "Réservation envoyée avec succès ! Vous allez être redirigé vers vos réservations."
+    "success_alert": "Réservation envoyée avec succès ! Vous allez être redirigé vers vos réservations.",
+    "view_my_bookings": "Voir mes réservations",
+    "confirmed_label": "Confirmé"
   },
   "Home": {
     "fleet_title": "Nos véhicules",
     "fleet_subtitle": "Trouvez la voiture qui vous convient en consultant notre parc auto.",
     "hero_title_1": "LE CONFORT PREMIUM",
     "hero_title_2": "UN PRIX ACCESSIBLE"
-  }
+  },
+  "Verify": {
+    "title_1": "Vérification",
+    "title_2": "BNT",
+    "step_label": "Étape 2: Documentation Obligatoire",
+    "maroc_label": "Résident Maroc",
+    "maroc_desc": "Vérification via CIN et Permis de conduire national.",
+    "etranger_label": "Arrivée Étranger",
+    "etranger_desc": "Vérification via Passeport, Permis et Numéro de vol.",
+    "btn_select": "Sélectionner",
+    "req_title": "Documents requis pour continuer:",
+    "cin_label": "C.I.N (Recto/Verso)",
+    "passport_label": "Passeport (Page principale)",
+    "license_label": "Permis de conduire (+2 ans)",
+    "flight_label": "Numéro de vol d'arrivée",
+    "btn_start": "Commencer le scan",
+    "scan_capture": "Capturer",
+    "scan_again": "Recommencer",
+    "scan_processing": "Analyse IA en cours...",
+    "error_seniority": "Votre permis doit avoir au moins 2 ans d'ancienneté.",
+    "error_expired": "Votre document est expiré.",
+    "error_generic": "Erreur lors de l'analyse. Veuillez réessayer.",
+    "flight_title": "Numéro de Vol",
+    "flight_placeholder": "Ex: AT960",
+    "flight_desc": "Entrez votre numéro de vol pour le suivi de votre arrivée",
+    "btn_finalize": "Finaliser ma réservation",
+    "cin_front": "CIN (Face Avant)",
+    "cin_back": "CIN (Face Arrière)",
+    "passport": "Passeport",
+    "license": "Permis de Conduire",
+    "license_front": "Permis de Conduire (Face Avant)",
+    "license_back": "Permis de Conduire (Face Arrière)",
+    "upload_file": "Ou télécharger un fichier",
+    "error_no_doc": "Aucun document détecté. Veuillez bien cadrer l'image.",
+    "doc_step": "Document {current} sur {total}"
+  },
+  "Complete": {
+    "title": "Vérification en cours",
+    "subtitle": "Documents transmis avec succès !",
+    "description": "Notre équipe analyse actuellement vos documents. Vous recevrez une confirmation via WhatsApp ou E-mail dans un délai maximum d'une heure.",
+    "btn_my_bookings": "Voir mes réservations",
+    "processing": "Mise à jour de votre dossier..."
+  },
+  "Footer": {
+  "company": "ENTREPRISE",
+  "contact": "CONTACT",
+  "legal": "INFORMATIONS LÉGALES",
+  "rights": "Tous droits réservés.",
+  "about": "L'excellence dans la location de voitures de luxe au Maroc."
+}
 }

@@ -3,6 +3,7 @@ import { getMessages, setRequestLocale } from 'next-intl/server'; // Importar se
 import { notFound } from 'next/navigation';
 import { routing } from '@/navigation';
 import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer'; // Importamos el Footer épico
 import { AuthProvider } from '@/context/AuthContext';
 import "./../globals.css";
 
@@ -38,6 +39,8 @@ export default async function LocaleLayout(props: {
               <main className="flex-grow">
                 {props.children}
               </main>
+              {/* FOOTER AÑADIDO AL FINAL DEL CONTENEDOR PRINCIPAL */}
+              <Footer />
             </div>
           </AuthProvider>
         </NextIntlClientProvider>

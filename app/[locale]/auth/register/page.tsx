@@ -5,7 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from '@/navigation';
 import { useTranslations } from 'next-intl';
-import { ChevronLeft, Globe, MessageCircle, Loader2, Mail, Lock } from 'lucide-react';
+import { ChevronLeft, Globe, MessageCircle, Loader2, Mail, Lock, AlertCircle, X } from 'lucide-react';
 
 export default function RegisterPage() {
   const t = useTranslations('Auth');
@@ -13,6 +13,7 @@ export default function RegisterPage() {
   const router = useRouter();
   
   const [loading, setLoading] = useState(false);
+  const [showPhoneError, setShowPhoneError] = useState(false); // Estado para el modal de alerta
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -37,6 +38,13 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // VALIDACIÓN OBLIGATORIA: El número debe empezar por "+"
+    if (!formData.phone.startsWith('+')) {
+      setShowPhoneError(true); // Abrimos el modal personalizado
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -57,11 +65,12 @@ export default function RegisterPage() {
 
       if (!currentUserId) throw new Error("No user ID found");
 
-      // 2. ACTUALIZACIÓN: Usamos upsert para asegurar que el perfil se cree o se actualice correctamente
+      // 2. ACTUALIZACIÓN: Incluimos el email en el upsert para que el Admin lo vea
       const { error: profileError } = await supabase
         .from('profiles')
         .upsert({
           id: currentUserId,
+          email: formData.email, // <--- ESTO ARREGLA EL "EMAIL NON DISPONIBLE"
           full_name: `${formData.firstName} ${formData.lastName}`.trim(),
           phone: formData.phone,
           country: formData.country,
@@ -79,18 +88,49 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-black px-6 py-10 font-sans">
+    <div className="min-h-screen bg-white text-black px-6 py-10 font-sans relative">
+      
+      {/* MODAL DE ALERTA PERSONALIZADO */}
+      {showPhoneError && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowPhoneError(false)} />
+          <div className="bg-white w-full max-w-sm rounded-[2rem] p-8 shadow-2xl relative z-10 animate-in fade-in zoom-in duration-300">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-6">
+                <AlertCircle size={32} />
+              </div>
+              <h3 className="text-xl font-[1000] uppercase italic tracking-tighter mb-4">Format Incorrect</h3>
+              <p className="text-gray-500 text-sm font-bold uppercase leading-relaxed tracking-tight mb-8">
+                Le numéro de téléphone debe empezar por <span className="text-black font-black underline">+</span> seguido del indicatif pays (ex: +212...)
+              </p>
+              <button 
+                onClick={() => setShowPhoneError(false)}
+                className="w-full bg-[#ff5f00] text-white py-4 rounded-2xl font-black uppercase text-xs tracking-widest shadow-lg active:scale-95 transition-all"
+              >
+                Compris
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-md mx-auto">
-        <button onClick={() => router.back()} className="mb-6">
+        {/* LOGO BNT - RESPETADO */}
+        <div className="flex justify-center mb-6">
+          <img src="/logo.png" alt="BNT Logo" className="h-16 w-auto object-contain" />
+        </div>
+
+        <button onClick={() => router.back()} className="mb-6 hover:bg-gray-100 p-2 rounded-full transition-colors">
           <ChevronLeft size={32} />
         </button>
 
+        {/* TÍTULO CENTRADO */}
         <h1 className="text-4xl font-[1000] uppercase tracking-tighter mb-10 italic leading-none text-center">
           {t('create_title')}
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* CAMPO EMAIL: Solo editable si NO hay usuario logueado */}
+          {/* CAMPO EMAIL: Ahora editable para confirmar el correo en la base de datos */}
           <div className="space-y-2">
             <label className="text-[11px] font-black uppercase text-gray-400 ml-1">{t('email_label')}</label>
             <div className="relative flex items-center">
@@ -98,10 +138,10 @@ export default function RegisterPage() {
               <input 
                 required
                 type="email"
-                disabled={!!user} // Bloqueado si vienes de Google
-                className={`w-full h-14 border border-gray-300 rounded-xl pl-12 pr-5 text-sm font-bold outline-none transition-all ${user ? 'bg-gray-100 text-gray-400' : 'bg-white'}`}
+                className="w-full h-14 border border-gray-300 rounded-xl pl-12 pr-5 text-sm font-bold outline-none transition-all bg-white"
                 value={formData.email}
                 onChange={e => setFormData({...formData, email: e.target.value})}
+                placeholder="votre@email.com"
               />
             </div>
           </div>
@@ -123,6 +163,7 @@ export default function RegisterPage() {
             </div>
           )}
 
+          {/* NOMBRE */}
           <div className="space-y-2">
             <label className="text-[11px] font-black uppercase text-gray-800 ml-1">{t('first_name')}</label>
             <input 
@@ -133,6 +174,7 @@ export default function RegisterPage() {
             />
           </div>
 
+          {/* APELLIDO */}
           <div className="space-y-2">
             <label className="text-[11px] font-black uppercase text-gray-800 ml-1">{t('last_name')}</label>
             <input 
@@ -143,8 +185,9 @@ export default function RegisterPage() {
             />
           </div>
 
+          {/* PAÍS */}
           <div className="space-y-2">
-            <label className="text-[11px] font-black uppercase text-gray-800 ml-1">{t('country_label')}</label>
+            <label className="text-[11px] font-black uppercase text-gray-400 ml-1">{t('country_label')}</label>
             <div className="relative flex items-center">
               <Globe className="absolute left-4 w-5 h-5 text-gray-400" />
               <input 
@@ -158,6 +201,7 @@ export default function RegisterPage() {
             </div>
           </div>
 
+          {/* WHATSAPP */}
           <div className="space-y-2">
             <label className="text-[11px] font-black uppercase text-gray-800 ml-1">{t('whatsapp_label')}</label>
             <div className="relative flex items-center">
@@ -165,7 +209,7 @@ export default function RegisterPage() {
               <input 
                 required
                 type="tel"
-                placeholder="+34..."
+                placeholder="+ [CODE] [NUMBER]" 
                 className="w-full h-14 border border-gray-300 rounded-xl pl-12 pr-5 text-sm font-bold focus:border-black outline-none transition-all bg-white"
                 value={formData.phone}
                 onChange={e => setFormData({...formData, phone: e.target.value})}
@@ -173,6 +217,7 @@ export default function RegisterPage() {
             </div>
           </div>
 
+          {/* BOTÓN REGISTRAR */}
           <button 
             type="submit" 
             disabled={loading}

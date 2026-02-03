@@ -89,7 +89,6 @@ export default function HomePage({ params }: { params: Promise<{ locale: Locale 
         <>
           <div className="relative w-full min-h-[600px] flex flex-col items-center pt-14 px-6">
             
-            {/* IMAGEN DEL COCHE: Posicionada sobre el SearchWidget con z-[60] */}
             <div className="absolute top-[40px] w-full max-w-[1200px] z-[60] flex justify-end pr-5 md:pr-20 pointer-events-none">
               <img 
                 src="/coche.avif" 
@@ -133,7 +132,8 @@ export default function HomePage({ params }: { params: Promise<{ locale: Locale 
             </div>
           </div>
 
-          <div className="w-full bg-[#ff5f00] pt-36 pb-28 flex flex-col items-center text-center px-6 relative z-10">
+          {/* AJUSTE DE COLOR: Se cambia el naranja por el dorado/bronce del logo (#9d8032) */}
+          <div className="w-full bg-[#9d8032] pt-36 pb-28 flex flex-col items-center text-center px-6 relative z-10">
             <h2 className="text-black text-[50px] md:text-[90px] font-[1000] leading-[0.8] tracking-[-0.05em] uppercase mb-8 italic">
               {th('hero_title_1')} <br />
               {th('hero_title_2')}

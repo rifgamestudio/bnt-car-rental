@@ -43,7 +43,7 @@ export default function ContactPage() {
                   <Mail className="text-[#ff5f00]" />
                 </div>
                 <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest mb-1">Email</p>
-                <p className="text-white font-bold">contact@bnt-car.com</p>
+                <p className="text-white font-bold">contact@bnt.com</p>
               </div>
 
             </div>

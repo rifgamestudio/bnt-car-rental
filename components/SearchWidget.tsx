@@ -87,7 +87,7 @@ export default function SearchWidget() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 items-end">
         
-        {/* 1. LIEU DE DÉPART - CORREGIDO CIERRE DE LISTA */}
+        {/* 1. LIEU DE DÉPART */}
         <div className="flex flex-col">
           <label className="text-[10px] font-black text-gray-400 mb-2 uppercase tracking-widest ml-1 leading-none">
             {t('pickup_label')}
@@ -95,7 +95,6 @@ export default function SearchWidget() {
           <div 
             className="relative flex items-center h-14 border border-gray-200 rounded-2xl px-4 bg-gray-50 hover:bg-white hover:border-black transition-all cursor-pointer group"
             onClick={(e) => {
-              // Si el clic viene del select, no hacemos nada (el select ya se encarga)
               if ((e.target as HTMLElement).tagName === 'SELECT') return;
               const select = e.currentTarget.querySelector('select');
               if (select) (select as any).showPicker?.() || select.focus();
@@ -107,7 +106,7 @@ export default function SearchWidget() {
               value={pickupLocation}
               onChange={(e) => {
                 setPickupLocation(e.target.value);
-                e.target.blur(); // CIERRA LA LISTA AL SELECCIONAR
+                e.target.blur(); 
               }}
             >
               <option value="" disabled>{t('placeholder')}</option>
@@ -120,7 +119,7 @@ export default function SearchWidget() {
           </div>
         </div>
 
-        {/* 2. LIEU DE RETOUR - CORREGIDO CIERRE DE LISTA */}
+        {/* 2. LIEU DE RETOUR */}
         <div className="flex flex-col">
           <label className="text-[10px] font-black text-gray-400 mb-2 uppercase tracking-widest ml-1 leading-none">
             {t('return_label')}
@@ -139,7 +138,7 @@ export default function SearchWidget() {
               value={returnLocation}
               onChange={(e) => {
                 setReturnLocation(e.target.value);
-                e.target.blur(); // CIERRA LA LISTA AL SELECCIONAR
+                e.target.blur(); 
               }}
             >
               <option value="" disabled>{t('placeholder')}</option>
@@ -218,11 +217,11 @@ export default function SearchWidget() {
           </div>
         </div>
 
-        {/* 5. BOTÓN MOSTRAR COCHES */}
+        {/* 5. BOTÓN MOSTRAR COCHES - AJUSTADO AL COLOR DORADO CORPORATIVO #9d8032 */}
         <div className="flex">
           <button 
             onClick={handleShowCars}
-            className="w-full h-14 bg-[#ff5f00] hover:bg-[#e65600] text-white rounded-2xl font-[1000] text-[13px] uppercase italic tracking-[0.1em] transition-all shadow-[0_10px_30px_rgba(255,95,0,0.3)] active:scale-95 px-4 whitespace-nowrap flex items-center justify-center"
+            className="w-full h-14 bg-[#9d8032] hover:bg-[#846b2a] text-white rounded-2xl font-[1000] text-[13px] uppercase italic tracking-[0.1em] transition-all shadow-[0_10px_30px_rgba(157,128,50,0.3)] active:scale-95 px-4 whitespace-nowrap flex items-center justify-center"
           >
             {t('btn_show')}
           </button>

@@ -170,7 +170,7 @@ export default function ClientBookingsPage() {
 
                         {/* Return */}
                         <div className="flex gap-4">
-                          <div className="w-3 h-3 rounded-full bg-[#ff5f00] mt-1.5 relative z-10"></div>
+                          <div className="w-3 h-3 rounded-full bg-[#d4af37] mt-1.5 relative z-10"></div>
                           <div>
                             <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">{t('return')}</p>
                             {/* APLICAMOS FORMATO DE UBICACIÓN */}
@@ -209,7 +209,7 @@ export default function ClientBookingsPage() {
                           className="w-full h-32 object-contain mb-4 drop-shadow-xl" 
                         />
                         <h3 className="text-xl font-black uppercase italic">{booking.cars.brand} {booking.cars.model}</h3>
-                        <p className="text-[#ff5f00] font-mono text-sm font-bold bg-black/5 inline-block px-2 py-1 rounded mt-1">
+                        <p className="text-[#d4af37] font-mono text-sm font-bold bg-black/5 inline-block px-2 py-1 rounded mt-1">
                           {booking.cars.plate}
                         </p>
                         <div className="mt-4 p-3 bg-green-100 text-green-800 rounded-xl text-xs font-bold">

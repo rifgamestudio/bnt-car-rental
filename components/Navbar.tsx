@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react'; // Añadido useState
+import React, { useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { Link, usePathname, useRouter } from './../navigation'; 
 import { User, Car, Globe, LogOut, LayoutDashboard } from 'lucide-react';
@@ -24,7 +24,7 @@ export default function Navbar() {
 
   const changeLanguage = (newLocale: Locale) => {
     router.replace(pathname, { locale: newLocale });
-    setIsLangOpen(false); // Cerrar menú tras cambiar
+    setIsLangOpen(false); 
     router.refresh();
   };
 
@@ -33,7 +33,6 @@ export default function Navbar() {
     window.location.href = '/'; 
   };
 
-  // LÓGICA BLINDADA: Evita el parpadeo de email al cambiar de idioma
   const getDisplayName = () => {
     if (profile?.full_name && profile.full_name.trim() !== "") {
       return profile.full_name;
@@ -59,11 +58,10 @@ export default function Navbar() {
           <img 
             src="/logo.png" 
             alt="BNT Logo" 
-            className="h-8 md:h-12 w-auto object-contain" 
+            className="h-8 md:h-10 w-auto object-contain" 
           />
         </Link>
 
-        {/* MENÚ PRINCIPAL (ACCUEIL & CONTACT) - Asegurado para móvil */}
         <div className="flex items-center gap-3 md:gap-8 text-[9px] md:text-[11px] font-bold uppercase tracking-wider flex-shrink-0">
           <Link href="/" className="hover:underline decoration-1 underline-offset-4 text-white no-underline transition-all">
             {t('home') || 'Accueil'}
@@ -77,19 +75,22 @@ export default function Navbar() {
       {/* Menú Derecha */}
       <div className="flex items-center gap-2 md:gap-6 text-[9px] md:text-[11px] font-bold uppercase tracking-wider">
         
-        {role === 'admin' ? (
-          <Link href="/admin/users" className="flex items-center gap-1 cursor-pointer text-[#ff5f00] hover:text-white transition-colors no-underline">
-            <LayoutDashboard className="w-4 h-4" />
-            <span className="hidden sm:inline">ADMIN</span>
-          </Link>
-        ) : (
-          <Link href="/booking" className="flex items-center gap-1 cursor-pointer hover:underline decoration-1 underline-offset-4 text-white no-underline">
-            <Car className="w-4 h-4" />
-            <span className="hidden sm:inline">{t('manage')}</span>
-          </Link>
+        {/* CORRECCIÓN: Solo mostramos el enlace si el usuario está conectado */}
+        {user && (
+          role === 'admin' ? (
+            <Link href="/admin/users" className="flex items-center gap-1 cursor-pointer text-[#ff5f00] hover:text-white transition-colors no-underline">
+              <LayoutDashboard className="w-4 h-4" />
+              <span className="hidden sm:inline">ADMIN</span>
+            </Link>
+          ) : (
+            <Link href="/booking" className="flex items-center gap-1 cursor-pointer hover:underline decoration-1 underline-offset-4 text-white no-underline">
+              <Car className="w-4 h-4" />
+              <span className="hidden sm:inline">{t('manage')}</span>
+            </Link>
+          )
         )}
 
-        {/* Selector de Idioma CORREGIDO para móvil con alta prioridad de capa */}
+        {/* Selector de Idioma */}
         <div 
           className="relative flex items-center gap-1 md:gap-2 cursor-pointer py-4"
           onClick={() => setIsLangOpen(!isLangOpen)}

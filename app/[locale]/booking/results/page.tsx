@@ -88,7 +88,8 @@ function ResultsContent() {
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-white">
-        <Loader2 className="w-12 h-12 animate-spin text-[#ff5f00] mb-4" />
+        {/* CARGADOR EN DORADO */}
+        <Loader2 className="w-12 h-12 animate-spin text-[#d4af37] mb-4" />
         <p className="font-black uppercase text-xs tracking-widest text-zinc-400 italic">Recherche de véhicules disponibles...</p>
       </div>
     );
@@ -134,7 +135,7 @@ function ResultsContent() {
               const averagePerDay = Math.round(carTotal / diffDays);
               
               return (
-                <div key={car.id} className="bg-white rounded-3xl shadow-xl overflow-hidden border border-zinc-100 flex flex-col md:flex-row hover:border-[#ff5f00]/30 transition-all duration-300 group">
+                <div key={car.id} className="bg-white rounded-3xl shadow-xl overflow-hidden border border-zinc-100 flex flex-col md:flex-row hover:border-[#d4af37]/30 transition-all duration-300 group">
                   <div className="md:w-1/3 bg-white p-8 flex items-center justify-center relative border-b md:border-b-0 md:border-r border-zinc-50">
                     <img 
                       src={car.image_url} 
@@ -144,7 +145,8 @@ function ResultsContent() {
                   </div>
 
                   <div className="md:w-1/3 p-10 flex flex-col justify-center">
-                    <span className="text-[#ff5f00] font-black text-[10px] uppercase tracking-[0.3em] mb-3 italic">
+                    {/* CATEGORÍA EN DORADO */}
+                    <span className="text-[#d4af37] font-black text-[10px] uppercase tracking-[0.3em] mb-3 italic">
                       {car.category}
                     </span>
                     <h3 className="text-3xl font-[1000] uppercase italic tracking-tighter leading-none mb-6">
@@ -192,11 +194,12 @@ function ResultsContent() {
                       </p>
                     </div>
 
+                    {/* BOTÓN RÉSERVER EN DORADO */}
                     <button 
                       onClick={() => {
                         router.push(`/booking/checkout?carId=${car.id}&price=${carTotal}&from=${from}&to=${to}&pickup=${airport}&return=${airport}`);
                       }}
-                      className="w-full mt-10 bg-[#ff5f00] hover:bg-black text-white py-5 rounded-2xl font-black uppercase text-sm tracking-[0.2em] transition-all shadow-xl active:scale-95 italic"
+                      className="w-full mt-10 bg-[#d4af37] hover:bg-black text-white py-5 rounded-2xl font-black uppercase text-sm tracking-[0.2em] transition-all shadow-xl active:scale-95 italic"
                     >
                       Réserver
                     </button>
@@ -220,7 +223,7 @@ export default function ResultsPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#f3f4f6]">
-        <Loader2 className="w-12 h-12 animate-spin text-[#ff5f00] mb-4" />
+        <Loader2 className="w-12 h-12 animate-spin text-[#d4af37] mb-4" />
         <p className="font-black uppercase text-xs tracking-widest text-zinc-400">Chargement des résultats...</p>
       </div>
     }>
